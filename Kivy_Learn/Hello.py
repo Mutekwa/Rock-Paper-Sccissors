@@ -31,8 +31,8 @@ class SayHello(App):
         return self.window
 
 
-def callback(self,instance):
-    self.greeting.text = "Hello" + self.user.textinput + "!"
+    def callback(self,instance):
+        self.greeting.text = "Hello" + self.user.text + "!"
 
 
 

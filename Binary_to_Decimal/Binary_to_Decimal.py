@@ -24,14 +24,53 @@ class ConverterApp(MDApp):
             self.label.text = ""
 
     def convert(self, args):
-        if self.state == 0:
-            val = int(self.input.text, 2)
-            self.converted.text = str(val)
-            self.label.text = "In decimal is:"
-        else:
-            val = bin(int(self.input.text))[2:]
-            self.converted.text = val
-            self.label.text = "In binary is:"
+        try:
+            if "." not in self.input.text:
+                if self.state == 0:
+                    val = int(self.input.text, 2)
+                    self.converted.text = str(val)
+                    self.label.text = "In decimal is:"
+                else:
+                    val = bin(int(self.input.text))[2:]
+                    self.converted.text = val
+                    self.label.text = "In binary is:"
+            else:
+                # floating point numbers conversion
+                whole, fract = self.input.text.split(".")
+
+                if self.state == 0:
+                    # convert binary to decimal
+                    whole = int(whole, 2)
+                    floating = 0
+                    for idx, digit in enumerate(fract):
+                        floating += int(digit) * 2 ** (-(idx + 1))
+                    self.label.text = "In decimal is:"
+                    self.converted.text = str(whole + floating)
+                else:
+                    # convert decimal to binary
+                    decimal_places = 10
+                    whole = bin(int(whole))[2:]
+                    fract = float("0." + fract)
+                    floating = []
+                    for i in range(decimal_places):
+                        if fract * 2 < 1:
+                            floating.append("0")
+                            fract *= 2
+                        elif fract * 2 > 1:
+                            floating.append("1")
+                            fract = fract * 2 - 1
+                        elif fract * 2 == 1.0:
+                            floating.append("1")
+                            break
+                    self.label.text = "In binary is:"
+                    self.converted.text = whole + "." + "".join(floating)
+        except ValueError:
+            self.converted.text = ""
+            if self.state == 0:
+                self.label.text = "Please Enter a valid decimal number"
+            else:
+                self.label.text = "Please enter a valid binary number"
+
 
     def build(self):
         self.state = 0
